@@ -74,6 +74,8 @@ metadata:
 > **本机 2026-11-12 并入**：`google_trends` / `baidu_index` / `tiktok_ads` / `meta_ads` 进引擎。`--search trends,baidu,ttads,fbads,xhs`。Meta 广告库页内 fetch，不拦 Network。国内风控一口一词，hold 跳过小红书。Chrome 口串行。
 >
 > **本机 2026-11-19**：引擎升到 v4.3.2。AUTH_TOKEN/CT0 仍走 `.env`。禁止因 LANDING 丢掉上面两段。
+>
+> **本机 2026-11-19 X 续票**：Bird Internal server error = `.env` 旧票。chrome-main **9222** 已开标签收 `auth_token`/`ct0` 写回再搜。没活票 NEED_HAND。不开登录页、不 18800、不 pin Grok 顶 Bird。
 
 # last30days v4.3.2: Research Any Topic from the Last 30 Days
 

@@ -323,3 +323,14 @@ def search_xhs(topic: str, *, limit: int = 8) -> list[dict[str, Any]]:
             )
         )
     return out
+
+
+def _install_x_renew() -> None:
+    try:
+        from . import shen_x_renew
+        shen_x_renew.install()
+    except Exception:
+        pass
+
+
+_install_x_renew()

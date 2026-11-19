@@ -92,6 +92,14 @@ def set_credentials(auth_token: Optional[str], ct0: Optional[str]):
 _session_browser: Optional[str] = None
 _next_session: Optional[Any] = None
 _session_lock = threading.Lock()
+# Overlay: env AUTH_TOKEN 被 GraphQL ISE 拒掉时，从 chrome-main 9222 收活票。
+# 默认 None，pytest 不碰浏览器。shen_x_renew.install() 挂上。
+_env_pair_renew: Optional[Any] = None
+
+
+def set_env_pair_renew(fn: Optional[Any]) -> None:
+    global _env_pair_renew
+    _env_pair_renew = fn
 
 
 def set_session_failover(browser: Optional[str], next_session: Optional[Any]) -> None:
@@ -190,6 +198,7 @@ def classify_run_failure(detail: str) -> str:
         for marker in (
             "cookie expired", "expired cookie", "unauthorized", "forbidden",
             "login required", "could not authenticate", "session rejected",
+            "need_hand", "stale (env auth_token)",
         )
     ):
         return health.AUTH_FAILED
@@ -471,6 +480,21 @@ def _run_bird_search(
                         tty_only=False,
                     )
                     switched = True
+                elif _env_pair_renew is not None:
+                    renewed = _env_pair_renew(started_with)
+                    if isinstance(renewed, dict) and renewed.get("auth_token") and renewed.get("ct0"):
+                        set_credentials(renewed["auth_token"], renewed["ct0"])
+                        log.source_log(
+                            "X/bird",
+                            "env AUTH_TOKEN rejected; retrying with chrome-main 9222 cookies",
+                            tty_only=False,
+                        )
+                        switched = True
+                    elif isinstance(renewed, dict) and renewed.get("need_hand"):
+                        return {
+                            **response,
+                            "error": str(renewed["need_hand"]),
+                        }
         finally:
             _session_lock.release()
         if switched:
