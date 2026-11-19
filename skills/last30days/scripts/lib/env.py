@@ -2216,24 +2216,10 @@ def _xiaohongshu_base_logged_in(base: str, http_module: Any) -> bool:
 
 
 def is_xiaohongshu_available(config: dict[str, Any]) -> bool:
-    """Check whether Xiaohongshu HTTP API is reachable and logged in."""
-    # Import here to avoid heavy imports at module load.
-    from . import http
+    """国内正路 xhs_search.py。hold 在当不可用。禁止探 xiaohongshu-mcp。"""
+    from . import shen_xuanpin
 
-    for base in _xiaohongshu_api_base_candidates(config):
-        try:
-            if _xiaohongshu_base_logged_in(base, http):
-                config[XIAOHONGSHU_RESOLVED_API_BASE_KEY] = base
-                return True
-        except (OSError, http.HTTPError):
-            continue
-        except Exception as exc:
-            sys.stderr.write(
-                f"[last30days] WARNING: unexpected error checking Xiaohongshu "
-                f"at {base}: {type(exc).__name__}: {exc}\n"
-            )
-            sys.stderr.flush()
-    return False
+    return bool(shen_xuanpin.xhs_ready() and not shen_xuanpin.xhs_blocked())
 
 
 # Backward compat alias

@@ -100,7 +100,7 @@ ALLOWED_CLUSTER_MODES = {"none", "story", "workflow", "market", "debate"}
 
 QUICK_SOURCE_PRIORITY = {
     "factual": ["hackernews", "reddit", "x", "xquik", "youtube"],
-    "product": ["jobs", "youtube", "reddit", "x", "xquik", "tiktok"],
+    "product": ["google_trends", "tiktok_ads", "jobs", "youtube", "reddit", "x", "xquik", "tiktok", "xiaohongshu"],
     "concept": ["hackernews", "reddit", "x", "xquik", "youtube"],
     "opinion": ["reddit", "x", "xquik", "youtube", "hackernews"],
     "how_to": ["youtube", "reddit", "x", "xquik", "hackernews"],
@@ -110,7 +110,7 @@ QUICK_SOURCE_PRIORITY = {
 }
 SOURCE_PRIORITY = {
     "factual": ["hackernews", "reddit", "x", "youtube"],
-    "product": ["jobs", "youtube", "reddit", "x", "tiktok", "hackernews"],
+    "product": ["google_trends", "tiktok_ads", "jobs", "youtube", "reddit", "x", "tiktok", "xiaohongshu", "hackernews"],
     "concept": ["hackernews", "reddit", "x", "youtube"],
     "opinion": ["reddit", "x", "stocktwits", "dripstack", "youtube", "hackernews"],
     "how_to": ["youtube", "reddit", "x", "hackernews"],
@@ -158,6 +158,10 @@ SOURCE_CAPABILITIES = {
     "amazon": {"reference", "company_signal", "product_signal"},
     "meta_ads": {"reference", "company_signal", "product_signal"},
     "xiaohongshu": {"video", "video_shortform", "social"},
+    "google_trends": {"web", "reference"},
+    "baidu_index": {"web", "reference"},
+    "tiktok_ads": {"video", "video_shortform", "social"},
+    "ig_tags": {"social"},
     "telegram": {"discussion", "social"},
     "github": {"discussion", "link"},
     "grounding": {"web", "reference", "link"},

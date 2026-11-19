@@ -33,6 +33,10 @@ SOURCE_QUALITY = {
     "instagram": 0.58,
     "tiktok": 0.58,
     "jobs": 0.72,
+    "google_trends": 0.82,
+    "baidu_index": 0.78,
+    "tiktok_ads": 0.7,
+    "ig_tags": 0.62,
     "corpus": 0.75,
 }
 

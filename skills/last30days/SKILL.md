@@ -69,6 +69,11 @@ metadata:
       - clawhub
 ---
 
+> **本机 2026-11-05**：国内风向的小红书搜/读禁止起 xiaohongshu-mcp，禁止 xhs-cli，禁止 OpenCLI。走 skill `xiaohongshu-search` / `xhs_search.py`。海外源仍用本 skill 引擎。
+>
+> **本机 2026-11-12 并入**：`google_trends` / `baidu_index` / `tiktok_ads` / `meta_ads` 进引擎。`--search trends,baidu,ttads,fbads,xhs`。Meta 广告库页内 fetch，不拦 Network。国内风控一口一词，hold 跳过小红书。Chrome 口串行。
+>
+> **本机 2026-11-19**：引擎升到 v4.3.2。AUTH_TOKEN/CT0 仍走 `.env`。禁止因 LANDING 丢掉上面两段。
 
 # last30days v4.3.2: Research Any Topic from the Last 30 Days
 

@@ -991,28 +991,22 @@ def _pinterest_record(config):
 
 
 def _xiaohongshu_record(config):
-    requires = (
-        "logged-in Xiaohongshu browser-session service; requested-only "
-        "(--search xhs)"
-    )
-    entry = prescriptions.get("xiaohongshu", "service_unreachable")
-    if config.get("XIAOHONGSHU_API_BASE"):
+    requires = "xhs_search.py + begin_click notes；禁止 xiaohongshu-mcp"
+    from . import shen_xuanpin
+
+    if shen_xuanpin.xhs_blocked():
         return _record(
-            status=health.OK, requires=requires,
-            note=(
-                "XIAOHONGSHU_API_BASE configured; service reachability is not "
-                "probed (doctor makes no network calls)"
-            ),
+            status="opt-in",
+            requires=requires,
+            note="login_risk_hold 在，跳过国内搜字",
         )
-    return _record(
-        status="opt-in",
-        requires=requires,
-        fix=_fix_text(entry),
-        note=(
-            "auto-probes http://localhost:18060 first, then "
-            "http://host.docker.internal:18060"
-        ),
-    )
+    if shen_xuanpin.xhs_ready():
+        return _record(
+            status=health.OK,
+            requires=requires,
+            note="国内风控一口一词，走 xhs_search",
+        )
+    return _record(status="opt-in", requires=requires, fix="装 xhs_search.py")
 
 
 def _jobs_record(config):

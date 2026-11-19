@@ -85,6 +85,7 @@ from . import (
     x_judge,
     xai_x,
     xiaohongshu_api,
+    shen_xuanpin,
     xquik,
     xurl_x,
     youtube_yt,
@@ -117,6 +118,12 @@ SEARCH_ALIAS = {
     "truth": "truthsocial",
     "web": "grounding",
     "xhs": "xiaohongshu",
+    "trends": "google_trends",
+    "baidu": "baidu_index",
+    "ttads": "tiktok_ads",
+    "fbads": "meta_ads",
+    "facebook": "meta_ads",
+    "igtags": "ig_tags",
     "meta": "meta_ads",
     "meta-ads": "meta_ads",
     "xquik": "x",  # xquik is a backend of the single "x" source, not its own source
@@ -133,6 +140,7 @@ SEARCH_ALIAS = {
 MAX_SOURCE_FETCHES: dict[str, int] = {
     "x": 2, "jobs": 1, "linkedin": 1, "stocktwits": 1, "trustpilot": 1, "amazon": 1,
     "telegram": 1, "meta_ads": 1, "devto": 1,
+    "xiaohongshu": 1, "google_trends": 1, "baidu_index": 1, "tiktok_ads": 1, "ig_tags": 1,
 }
 
 # Sources whose thin result is their normal success state, so the "<3 items"
@@ -346,6 +354,10 @@ MOCK_AVAILABLE_SOURCES = [
     "dripstack",
     "telegram",
     "devto",
+    "google_trends",
+    "baidu_index",
+    "tiktok_ads",
+    "ig_tags",
 ]
 
 
@@ -514,10 +526,9 @@ def available_sources(
         or (requested_sources and "meta_ads" in requested_sources)
     ):
         available.append("meta_ads")
-    if (
-        "xiaohongshu" in include_sources
-        or (requested_sources and "xiaohongshu" in requested_sources)
-    ) and env.is_xiaohongshu_available(config):
+    available.extend(["google_trends", "baidu_index", "tiktok_ads", "ig_tags"])
+    # 国内小红书：xhs_search.py。hold 在不加。禁止 xiaohongshu-mcp。
+    if shen_xuanpin.xhs_ready() and not shen_xuanpin.xhs_blocked():
         available.append("xiaohongshu")
     # Threads: opt-in via INCLUDE_SOURCES (same pattern as perplexity/linkedin).
     # Was auto-on with the key; gated so the onboarding "Everything" tier is a
@@ -7596,13 +7607,20 @@ def _retrieve_stream_impl(
         )
         return pinterest.parse_pinterest_response(result), _result_outcome_artifact(source, result)
     if source == "xiaohongshu":
-        return xiaohongshu_api.search_feeds(
-            subquery.search_query,
-            from_date,
-            to_date,
-            env.get_xiaohongshu_api_base(config),
-            depth=depth,
-        ), {}
+        q = raw_topic or subquery.search_query
+        return shen_xuanpin.search_xhs(q, limit=8 if depth == "quick" else 12), {}
+    if source == "google_trends":
+        q = raw_topic or subquery.search_query
+        return shen_xuanpin.search_google_trends(q), {}
+    if source == "baidu_index":
+        q = raw_topic or subquery.search_query
+        return shen_xuanpin.search_baidu_index(q), {}
+    if source == "tiktok_ads":
+        q = raw_topic or subquery.search_query
+        return shen_xuanpin.search_tiktok_ads(q), {}
+    if source == "ig_tags":
+        q = raw_topic or subquery.search_query
+        return shen_xuanpin.search_ig_tags(q), {}
     if source == "perplexity":
         return perplexity.search(subquery.search_query, date_range, config, deep=config.get("_deep_research", False))
     raise RuntimeError(f"Unsupported source: {source}")
